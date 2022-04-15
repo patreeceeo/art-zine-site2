@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ page_title }} &mdash; concrete gorilla art zine</title>
+
+    <meta
+      name="description"
+      content="A serialized zine of art made while hanging out and maybe having a drink or two."
+      />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:site_name" content="concrete gorilla art zine" />
+    <meta property="og:title" content="{{ page_title }}" />
+    <meta property="og:url" content="{{ url }}" />
+    <meta
+      property="og:description"
+      content="A serialized zine of art made while hanging out and maybe having a drink or two."
+      />
+    <meta property="og:image" content="{{ page_image }}" />
+    <link rel="canonical" href="{{ url }}" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+
+        "@type": "Person",
+        "name": "Concrete Gorilla Zine Gang",
+        "url": "{{url}}"
+      }
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- For all browsers -->
+    <link rel="stylesheet" href="/assets/css/main.css" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="stylesheet" href="/assets/css/overrides.css" />
+  </head>
+  <body>
+    <nav class="skip-links">
+      <ul>
+        <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+        <li>
+          <a href="#main" class="screen-reader-shortcut">Skip to content</a>
+        </li>
+        <li>
+          <a href="#footer" class="screen-reader-shortcut">Skip to footer</a>
+        </li>
+      </ul>
+    </nav>
+    <nav id="site-nav">
+      {{ site_nav }}
+    </nav>
+      <main>
+      <nav id="main"/>
+      {{ page_content }}
+      </main>
+      <footer id="footer">
+        {{ site_footer }}
+      </footer>
+  </body>
+</html>
