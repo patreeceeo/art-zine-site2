@@ -1,5 +1,7 @@
 #!/bin/sh -u
 
+# TODO use GNU Make?
+
 log() {
   echo "LOG: $1" 1>&2
 }
@@ -8,16 +10,17 @@ paginate()
 {
   script=$1
   shift
-  prev_page=
-  page=
+  prev_page=.
+  page=.
+  next_page=.
   for next_page in $@; do
-    if [ -n "$page" ]; then
+    if [ "$page" != "." ]; then
       eval "$script"
     fi
     prev_page=$page
     page=$next_page
   done
-  next_page=
+  next_page=.
   eval "$script"
 }
 
@@ -58,16 +61,65 @@ export page_image=""
 export site_nav=""
 export site_footer=""
 export page_content=""
+export artwork=""
+export prev_page_href=""
+export next_page_href=""
+export prev_page_title=""
+export next_page_title=""
 
-create_issue() {
-  path=$1
-  title=$2
-  href="$OUT_DIR/issues/$path"
-  mkdir -p $href
+echo_issue_page_source_path() {
+  issue_id=$1
+  page_id=$2
+  echo "src/issues/$issue_id/pages/$page_id.sh"
+}
 
-  path_prefix="issues/$path/cover"
-  img_ext=$3
-  respimg "src/$path_prefix.$img_ext" "$href/cover" \
+echo_issue_content_path() {
+  issue_id=$1
+  echo "src/issues/$issue_id"
+}
+
+echo_issue_href() {
+  issue_id=$1
+
+  echo "$OUT_DIR/issues/$issue_id"
+}
+
+echo_issue_page_href() {
+  issue_id=$1
+  page_name=$2
+  echo "$OUT_DIR/issues/$issue_id/$page_name.html"
+}
+
+create_issue_page() {
+  issue_id="$1"
+  prev_page=$(basename $2 .sh)
+  page=$(basename $3 .sh)
+  next_page=$(basename $4 .sh)
+
+  prev_page_href=
+  prev_page_title=
+  if [ $prev_page != "." ]; then
+    source_path=$(echo_issue_page_source_path $issue_id $prev_page)
+    . "$source_path"
+    page_name=$page_name
+    prev_page_href=$(echo_issue_page_href $issue_id $page_name)
+    prev_page_title=$page_title
+  fi
+
+  next_page_href=
+  next_page_title=
+  if [ $next_page != "." ]; then
+    source_path=$(echo_issue_page_source_path $issue_id $next_page)
+    . "$source_path"
+    next_page_href=$(echo_issue_page_href $issue_id $page_name)
+    next_page_title=$page_title
+  fi
+
+  . $(echo_issue_page_source_path $issue_id $page)
+
+  path_prefix="issues/$issue_id/$page_img_name"
+  img_ext=$page_img_ext
+  respimg "src/$path_prefix.$img_ext" "$href/$page_img_name" \
     $COVER_IMAGE_SIZE_LG $COVER_IMAGE_SIZE_MED $COVER_IMAGE_SIZE_SM
 
   img_width=$COVER_IMAGE_SIZE_SM
@@ -81,15 +133,57 @@ create_issue() {
   img_width=$COVER_IMAGE_SIZE_LG
 
   loading="lazy"
-  alt="cover for this issue, $4"
+  alt="$page_img_alt"
+  artwork=$(expand_template "src/partials/picture.html")
+
+  page_content=$(cat "$(echo_issue_content_path $issue_id)/$page_inner_content_file")
+  page_content=$(expand_template "src/partials/issue_page.html")
+  expand_template "src/layouts/site.html" > $(echo_issue_page_href $issue_id $page_name)
+}
+
+create_issue() {
+  id=$1
+  content_path=$(echo_issue_content_path $id)
+  source_path=$(echo_issue_page_source_path $id 0)
+  . "$source_path"
+  href=$(echo_issue_href $id)
+  mkdir -p $href
+
+  pages=$(ls "$content_path/pages")
+  paginate "create_issue_page \"$id\" \$prev_page \$page \$next_page" $pages
+}
+
+echo_issue_link() {
+  issue_id=$1
+  source_path=$(echo_issue_page_source_path $issue_id 0)
+  . "$source_path"
+  href=$(echo_issue_href $1)
+
+  echo href=$href 1>&2
+
+  path_prefix="issues/$issue_id/$page_img_name"
+  img_ext=$page_img_ext
+
+  # img_ext=$page_img_ext
+  # respimg "src/$path_prefix.$img_ext" "$href/$page_img_name" \
+  #   $COVER_IMAGE_SIZE_LG $COVER_IMAGE_SIZE_MED $COVER_IMAGE_SIZE_SM
+
+  img_width=$COVER_IMAGE_SIZE_SM
+  device_min_width=$BREAKPOINT_LARGE
+  sources="$(expand_template "src/partials/picture_source.html")"
+
+  img_width=$COVER_IMAGE_SIZE_MED
+  device_min_width=$BREAKPOINT_SMALL
+  sources="$sources{{}}$(expand_template "src/partials/picture_source.html")"
+
+  img_width=$COVER_IMAGE_SIZE_LG
+
+  loading="lazy"
+  alt="cover for this issue, $page_img_alt"
   cover=$(expand_template "src/partials/picture.html")
 
-  link=$(expand_template "src/partials/article_link.html")
-  if [ -n "$issue_links" ]; then
-    issue_links="$issue_links{{}}$link"
-  else
-    issue_links=$link
-  fi
+  title=$page_title
+  echo $(expand_template "src/partials/article_link.html")
 }
 
 rm -rf $OUT_DIR
@@ -100,11 +194,14 @@ page_title="*WHOOSH* you've arrived"
 page_content=$(expand_template "src/pages/index.html")
 expand_template "src/layouts/site.html" > index.html
 
-create_issue "01-folklore" "issue #1: folklore" png "a fairy carrying a fountain pen."
-create_issue "01.5-pickle" "issue #1.5: pickle" jpg "a very cute pickle"
+create_issue "01-folklore"
+create_issue "01.5-pickle"
+
+issue_links=$(echo_issue_link "01-folklore")
+issue_links="$issue_links{{}}$(echo_issue_link "01.5-pickle")"
+
 
 url="/site"
-page_title="*WHOOSH* you've arrived"
 page_title="*WHOMP* glad you could make it"
 page_content=$(expand_template "src/pages/home.html")
 expand_template "src/layouts/site.html" > $OUT_DIR/index.html
