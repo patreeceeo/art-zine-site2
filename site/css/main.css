@@ -1,0 +1,38 @@
+body {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+ul {
+  list-style: none;
+}
+
+footer {
+  margin-top: 4em;
+}
+
+.screen-reader-shortcut {
+  position: absolute !important;
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px !important;
+  width: 1px !important;
+  border: 0 !important;
+  overflow: hidden;
+}
+
+.artwork-frame {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.artwork-frame img {
+  max-width: 100%;
+}
+
+#site-nav {
+  display: flex;
+  flex-direction: row;
+}
+#site-title {
+  margin: 0.5em;
+}

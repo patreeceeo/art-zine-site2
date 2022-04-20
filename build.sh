@@ -50,9 +50,9 @@ paginate()
 # COVER_IMAGE_SIZES="555 352 152"
 
 OUT_DIR=site
-COVER_IMAGE_SIZE_SM=152
-COVER_IMAGE_SIZE_MED=352
-COVER_IMAGE_SIZE_LG=566
+COVER_IMAGE_SIZE_SM=384
+COVER_IMAGE_SIZE_MED=768
+COVER_IMAGE_SIZE_LG=1024
 COVER_IMAGE_SIZE_XL=2048
 
 BREAKPOINT_LARGE=1024
@@ -73,8 +73,6 @@ export excerpt=""
 export page_title=""
 export url=""
 export page_image=""
-export site_nav=""
-export site_footer=""
 export page_content=""
 export artwork=""
 export prev_page_href=""
@@ -223,3 +221,9 @@ page_title="*WHOMP* glad you could make it"
 page_content=$(expand_template "src/pages/home.html")
 expand_template "src/layouts/site.html" > $OUT_DIR/index.html
 
+
+mkdir -p site/css
+cp src/css/main.css site/css/main.css
+
+mkdir -p site/images
+respimg src/images/logo.png site/images/logo 34

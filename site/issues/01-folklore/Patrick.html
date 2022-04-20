@@ -1,4 +1,4 @@
-                <!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -34,7 +34,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- For all browsers -->
-    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/site/css/main.css" />
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -57,15 +57,20 @@
       </ul>
     </nav>
     <nav id="site-nav">
-      
+      <a href="/"><img src="/site/images/logo-34.png" alt="concrete gorilla art zine"></a>
+      <a id="site-title" href="/">
+        concrete gorilla art zine<br>
+      </a>
     </nav>
-      <main>
+    <main>
       <nav id="main"/>
-      
+        <div class="artwork-frame">
+
 <picture>
-  <source srcset="/site/issues/01-folklore/Patrick-2048.jpg" media="(min-width: 1024px)"><source srcset="/site/issues/01-folklore/Patrick-566.jpg" media="(min-width: 768px)">
-  <img src="/site/issues/01-folklore/Patrick-152.jpg" alt="Magic vs Tech" loading="lazy"/>
+  <source srcset="/site/issues/01-folklore/Patrick-2048.jpg" media="(min-width: 1024px)"><source srcset="/site/issues/01-folklore/Patrick-1024.jpg" media="(min-width: 768px)">
+  <img src="/site/issues/01-folklore/Patrick-384.jpg" alt="Magic vs Tech" loading="lazy"/>
 </picture>
+</div>
 <article class="page" itemscope="" itemtype="https://schema.org/CreativeWork">
   <meta itemprop="headline" content="Magic vs Tech">
   <meta itemprop="description" content="">
@@ -92,9 +97,21 @@
 
 
 </div>
-      </main>
-      <footer id="footer">
-        
-      </footer>
+    </main>
+    <footer id="footer">
+      © 2022 all contributors to this project AKA the concrete gorilla zine gang. Concrete Gorilla logo design by <a href="https://www.revoltrightnow.com/">Revolt</a>. Powered by Jekyll & Minimal Mistakes.
+    </footer>
+  <script type="text/javascript">
+    const el=document.getElementById("site-title");
+    const originalText = el.innerText;
+    el.addEventListener("mouseover", mouseover);
+    el.addEventListener("mouseout", mouseout);
+    function mouseover() {
+      el.innerText = "CZGZ > Overlord"
+    }
+    function mouseout() {
+      el.innerText = originalText;
+    }
+  </script>
   </body>
 </html>
