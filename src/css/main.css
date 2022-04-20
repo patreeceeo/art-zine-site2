@@ -12,6 +12,21 @@ footer {
   margin-top: 4em;
 }
 
+h1 {
+  font-size: 3rem;
+  line-height: 5rem;
+}
+h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 3rem;
+}
+h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 3rem;
+}
+
 .screen-reader-shortcut {
   position: absolute !important;
   clip: rect(1px, 1px, 1px, 1px);
