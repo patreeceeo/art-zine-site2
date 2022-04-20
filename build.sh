@@ -3,8 +3,22 @@
 # TODO use GNU Make?
 
 log() {
+  # use logger?
   echo "LOG: $1" 1>&2
 }
+
+# ssource() {
+#   set -x
+#   set > /tmp/set1
+#   . "$1"
+#   set > /tmp/set2
+#   the_diff=$(diff /tmp/set1 /tmp/set2)
+#   echo "the_diff>>>\n$the_diff\n<<<the_diff"
+#   unexpected_changes=$(echo $the_diff | perl -ne '/[<>] (.*?)=/ && print "$1\n"' | perl -ne "/($2|_)/ || print \"$_\"")
+#   if [ -n "$unexpected_changes" ]; then
+#     echo "the following variables were changed unexpectedly: '$unexpected_changes'"
+#   fi
+# }
 
 paginate()
 {
@@ -39,6 +53,7 @@ OUT_DIR=site
 COVER_IMAGE_SIZE_SM=152
 COVER_IMAGE_SIZE_MED=352
 COVER_IMAGE_SIZE_LG=566
+COVER_IMAGE_SIZE_XL=2048
 
 BREAKPOINT_LARGE=1024
 BREAKPOINT_SMALL=768
@@ -81,13 +96,13 @@ echo_issue_content_path() {
 echo_issue_href() {
   issue_id=$1
 
-  echo "$OUT_DIR/issues/$issue_id"
+  echo "/$OUT_DIR/issues/$issue_id"
 }
 
 echo_issue_page_href() {
   issue_id=$1
   page_name=$2
-  echo "$OUT_DIR/issues/$issue_id/$page_name.html"
+  echo "/$OUT_DIR/issues/$issue_id/$page_name.html"
 }
 
 create_issue_page() {
@@ -115,30 +130,38 @@ create_issue_page() {
     next_page_title=$page_title
   fi
 
+  # clear optional args
+  page_content_file=
+
   . $(echo_issue_page_source_path $issue_id $page)
 
   path_prefix="issues/$issue_id/$page_img_name"
   img_ext=$page_img_ext
-  respimg "src/$path_prefix.$img_ext" "$href/$page_img_name" \
-    $COVER_IMAGE_SIZE_LG $COVER_IMAGE_SIZE_MED $COVER_IMAGE_SIZE_SM
+  respimg "src/$path_prefix.$img_ext" ".$href/$page_img_name" \
+    $COVER_IMAGE_SIZE_XL $COVER_IMAGE_SIZE_LG $COVER_IMAGE_SIZE_MED $COVER_IMAGE_SIZE_SM
 
-  img_width=$COVER_IMAGE_SIZE_SM
+  img_width=$COVER_IMAGE_SIZE_XL
   device_min_width=$BREAKPOINT_LARGE
   sources="$(expand_template "src/partials/picture_source.html")"
 
-  img_width=$COVER_IMAGE_SIZE_MED
+  img_width=$COVER_IMAGE_SIZE_LG
   device_min_width=$BREAKPOINT_SMALL
   sources="$sources{{}}$(expand_template "src/partials/picture_source.html")"
 
-  img_width=$COVER_IMAGE_SIZE_LG
+  img_width=$COVER_IMAGE_SIZE_SM
 
   loading="lazy"
   alt="$page_img_alt"
   artwork=$(expand_template "src/partials/picture.html")
 
-  page_content=$(cat "$(echo_issue_content_path $issue_id)/$page_inner_content_file")
+  if [ -n "${page_content_file-""}" ]; then
+    page_content=$(cat "$(echo_issue_content_path $issue_id)/$page_content_file")
+  fi
   page_content=$(expand_template "src/partials/issue_page.html")
-  expand_template "src/layouts/site.html" > $(echo_issue_page_href $issue_id $page_name)
+
+  page_href=$(echo_issue_page_href $issue_id $page_name)
+  url="$page_href"
+  expand_template "src/layouts/site.html" > ".$(echo_issue_page_href $issue_id $page_name)"
 }
 
 create_issue() {
@@ -147,7 +170,7 @@ create_issue() {
   source_path=$(echo_issue_page_source_path $id 0)
   . "$source_path"
   href=$(echo_issue_href $id)
-  mkdir -p $href
+  mkdir -p ".$href"
 
   pages=$(ls "$content_path/pages")
   paginate "create_issue_page \"$id\" \$prev_page \$page \$next_page" $pages
@@ -159,14 +182,8 @@ echo_issue_link() {
   . "$source_path"
   href=$(echo_issue_href $1)
 
-  echo href=$href 1>&2
-
   path_prefix="issues/$issue_id/$page_img_name"
   img_ext=$page_img_ext
-
-  # img_ext=$page_img_ext
-  # respimg "src/$path_prefix.$img_ext" "$href/$page_img_name" \
-  #   $COVER_IMAGE_SIZE_LG $COVER_IMAGE_SIZE_MED $COVER_IMAGE_SIZE_SM
 
   img_width=$COVER_IMAGE_SIZE_SM
   device_min_width=$BREAKPOINT_LARGE
