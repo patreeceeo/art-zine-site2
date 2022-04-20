@@ -79,6 +79,7 @@ export prev_page_href=""
 export next_page_href=""
 export prev_page_title=""
 export next_page_title=""
+export site_logo=""
 
 echo_issue_page_source_path() {
   issue_id=$1
@@ -216,14 +217,30 @@ issue_links=$(echo_issue_link "01-folklore")
 issue_links="$issue_links{{}}$(echo_issue_link "01.5-pickle")"
 
 
+
+path_prefix="images/logo"
+img_ext="png"
+
+img_width=85
+device_min_width=$BREAKPOINT_LARGE
+sources="$(expand_template "src/partials/picture_source.html")"
+
+img_width=34
+
+loading="lazy"
+alt="the concrete gorilla itself"
+site_logo=$(expand_template "src/partials/picture.html")
+
 url="/site"
 page_title="*WHOMP* glad you could make it"
 page_content=$(expand_template "src/pages/home.html")
+echo $site_logo
 expand_template "src/layouts/site.html" > $OUT_DIR/index.html
 
 
 mkdir -p site/css
-cp src/css/main.css site/css/main.css
+cp src/css/* site/css/*
 
 mkdir -p site/images
 respimg src/images/logo.png site/images/logo 34
+respimg src/images/logo.png site/images/logo 85
