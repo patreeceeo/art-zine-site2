@@ -32,6 +32,11 @@ footer {
   max-height: 100vh;
 }
 
+#issue-list li {
+  display: inline-block;
+  margin-right: 1rem;
+}
+
 #site-nav {
   display: flex;
   flex-direction: row;
@@ -44,3 +49,4 @@ footer {
   align-items: center;
   margin-left: 1rem;
 }
+
