@@ -234,12 +234,11 @@ site_logo=$(expand_template "src/partials/picture.html")
 url="/site"
 page_title="*WHOMP* glad you could make it"
 page_content=$(expand_template "src/pages/home.html")
-echo $site_logo
 expand_template "src/layouts/site.html" > $OUT_DIR/index.html
 
 
 mkdir -p site/css
-cp src/css/* site/css/*
+cp src/css/* site/css/
 
 mkdir -p site/images
 respimg src/images/logo.png site/images/logo 34
