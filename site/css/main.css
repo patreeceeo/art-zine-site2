@@ -35,6 +35,7 @@ footer {
 #site-nav {
   display: flex;
   flex-direction: row;
+  margin-bottom: 2em;
 }
 
 #site-title {
