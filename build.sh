@@ -47,13 +47,14 @@ paginate()
 #   expand_templates "layouts/html5_boiler.html" "layouts/page_with_menu.html" $page > $OUT_DIR/$page
 # done
 
-# COVER_IMAGE_SIZES="555 352 152"
 
 OUT_DIR=site
-COVER_IMAGE_SIZE_SM=384
-COVER_IMAGE_SIZE_MED=768
-COVER_IMAGE_SIZE_LG=1024
-COVER_IMAGE_SIZE_XL=2048
+ARTWORK_SIZE_SM=384
+ARTWORK_SIZE_MED=768
+ARTWORK_SIZE_LG=1024
+ARTWORK_SIZE_XL=2048
+export artwork_sizes="$ARTWORK_SIZE_SM{{}}$ARTWORK_SIZE_MED{{}}$ARTWORK_SIZE_LG{{}}$ARTWORK_SIZE_XL"
+export artwork_formats="jpg{{}}png"
 
 BREAKPOINT_LARGE=1024
 BREAKPOINT_SMALL=768
@@ -136,18 +137,21 @@ create_issue_page() {
 
   path_prefix="issues/$issue_id/$page_img_name"
   img_ext=$page_img_ext
-  respimg "src/$path_prefix.$img_ext" ".$href/$page_img_name" \
-    $COVER_IMAGE_SIZE_XL $COVER_IMAGE_SIZE_LG $COVER_IMAGE_SIZE_MED $COVER_IMAGE_SIZE_SM
 
-  img_width=$COVER_IMAGE_SIZE_XL
+  if [ ! -e ".$href/$page_img_name-$ARTWORK_SIZE_SM.$img_ext" ] || [ "src/$path_prefix.$img_ext" -nt ".$href/$page_img_name-$ARTWORK_SIZE_SM.$img_ext" ]; then
+    respimg "src/$path_prefix.$img_ext" ".$href/$page_img_name" \
+      $ARTWORK_SIZE_XL $ARTWORK_SIZE_LG $ARTWORK_SIZE_MED $ARTWORK_SIZE_SM
+  fi
+
+  img_width=$ARTWORK_SIZE_XL
   device_min_width=$BREAKPOINT_LARGE
   sources="$(expand_template "src/partials/picture_source.html")"
 
-  img_width=$COVER_IMAGE_SIZE_LG
+  img_width=$ARTWORK_SIZE_LG
   device_min_width=$BREAKPOINT_SMALL
   sources="$sources{{}}$(expand_template "src/partials/picture_source.html")"
 
-  img_width=$COVER_IMAGE_SIZE_SM
+  img_width=$ARTWORK_SIZE_SM
 
   loading="lazy"
   alt="$page_img_alt"
@@ -184,15 +188,8 @@ echo_issue_link() {
   path_prefix="issues/$issue_id/$page_img_name"
   img_ext=$page_img_ext
 
-  img_width=$COVER_IMAGE_SIZE_SM
-  device_min_width=$BREAKPOINT_LARGE
-  sources="$(expand_template "src/partials/picture_source.html")"
-
-  img_width=$COVER_IMAGE_SIZE_MED
-  device_min_width=$BREAKPOINT_SMALL
-  sources="$sources{{}}$(expand_template "src/partials/picture_source.html")"
-
-  img_width=$COVER_IMAGE_SIZE_LG
+  sources=
+  img_width=$ARTWORK_SIZE_SM
 
   loading="lazy"
   alt="cover for this issue, $page_img_alt"
@@ -201,9 +198,6 @@ echo_issue_link() {
   title=$page_title
   echo $(expand_template "src/partials/article_link.html")
 }
-
-rm -rf $OUT_DIR
-mkdir $OUT_DIR
 
 url="/"
 page_title="*WHOOSH* you've arrived"
@@ -215,8 +209,6 @@ create_issue "01.5-pickle"
 
 issue_links=$(echo_issue_link "01-folklore")
 issue_links="$issue_links{{}}$(echo_issue_link "01.5-pickle")"
-
-
 
 path_prefix="images/logo"
 img_ext="png"
@@ -241,5 +233,5 @@ mkdir -p site/css
 cp src/css/* site/css/
 
 mkdir -p site/images
-respimg src/images/logo.png site/images/logo 34
-respimg src/images/logo.png site/images/logo 85
+make
+
