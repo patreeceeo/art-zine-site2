@@ -1,4 +1,4 @@
-#!/bin/sh -u
+#!/bin/sh -xu
 
 # TODO use GNU Make?
 
@@ -205,8 +205,10 @@ expand_template "src/layouts/site.html" > index.html
 create_issue "01-folklore"
 create_issue "01.5-pickle"
 create_issue "02-solarpunk"
+create_issue "03-alpha-centauri-hootenanny"
 
-issue_links=$(echo_issue_link "02-solarpunk")
+issue_links=$(echo_issue_link "03-alpha-centauri-hootenanny")
+issue_links="$issue_links{{}}$(echo_issue_link "02-solarpunk")"
 issue_links="$issue_links{{}}$(echo_issue_link "01.5-pickle")"
 issue_links="$issue_links{{}}$(echo_issue_link "01-folklore")"
 
@@ -228,10 +230,5 @@ page_title="*WHOMP* glad you could make it"
 page_content=$(expand_template "src/pages/home.html")
 expand_template "src/layouts/site.html" > $OUT_DIR/index.html
 
-
-mkdir -p site/css
-cp src/css/* site/css/
-
-mkdir -p site/images
 make
 
