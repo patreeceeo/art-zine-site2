@@ -204,9 +204,11 @@ expand_template "src/layouts/site.html" > index.html
 
 create_issue "01-folklore"
 create_issue "01.5-pickle"
+create_issue "02-solarpunk"
 
-issue_links=$(echo_issue_link "01-folklore")
+issue_links=$(echo_issue_link "02-solarpunk")
 issue_links="$issue_links{{}}$(echo_issue_link "01.5-pickle")"
+issue_links="$issue_links{{}}$(echo_issue_link "01-folklore")"
 
 path_prefix="images/logo"
 img_ext="png"
